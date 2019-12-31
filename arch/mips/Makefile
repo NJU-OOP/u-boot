@@ -17,6 +17,7 @@ machine-$(CONFIG_ARCH_JZ47XX) += jz47xx
 machine-$(CONFIG_MACH_PIC32) += pic32
 machine-$(CONFIG_ARCH_MTMIPS) += mtmips
 machine-$(CONFIG_ARCH_MSCC) += mscc
+machine-$(CONFIG_TARGET_NOOP) += noop
 
 machdirs := $(patsubst %,arch/mips/mach-%/,$(machine-y))
 libs-y += $(machdirs)
@@ -40,5 +41,6 @@ tune-$(CONFIG_MIPS_TUNE_74KC) += -mtune=74kc
 
 # Include default header files
 cflags-y += -I$(srctree)/arch/mips/include/asm/mach-generic
+cflags-$(CONFIG_TARGET_NOOP) += -mno-branch-likely -mno-imadd -mno-mad -mdivide-breaks
 
 PLATFORM_CPPFLAGS += $(arch-y) $(tune-y) $(cflags-y)

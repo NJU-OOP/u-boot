@@ -12,6 +12,17 @@ choice
 	prompt "Target select"
 	optional
 
+config TARGET_NOOP
+	bool "Support NOOP"
+	select OF_CONTROL
+	select DM
+	select DM_SERIAL
+	select SUPPORTS_LITTLE_ENDIAN
+	select SUPPORTS_CPU_MIPS32_R1
+	select ROM_EXCEPTION_VECTORS
+	select SKIP_LOWLEVEL_INIT
+	# select DEBUG_UART_SKIP_INIT
+
 config TARGET_QEMU_MIPS
 	bool "Support qemu-mips"
 	select ROM_EXCEPTION_VECTORS
@@ -159,6 +170,7 @@ source "arch/mips/mach-bmips/Kconfig"
 source "arch/mips/mach-jz47xx/Kconfig"
 source "arch/mips/mach-pic32/Kconfig"
 source "arch/mips/mach-mtmips/Kconfig"
+source "arch/mips/mach-noop/Kconfig"
 
 if MIPS
 

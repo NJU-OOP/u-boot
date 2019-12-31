@@ -27,6 +27,7 @@ ifneq ($(CONFIG_UT_UNICODE)$(CONFIG_EFI_LOADER),)
 obj-y += charset.o
 endif
 endif
+obj-y += sysdbg.o
 obj-$(CONFIG_USB_TTY) += circbuf.o
 obj-y += crc7.o
 obj-y += crc8.o

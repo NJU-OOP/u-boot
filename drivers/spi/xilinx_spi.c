@@ -276,7 +276,7 @@ static int xilinx_spi_xfer(struct udevice *dev, unsigned int bitlen,
 	 * block to FLASH. STARTUP block don't provide clock as soon
 	 * as QSPI provides command. So first command fails.
 	 */
-	xilinx_spi_startup_block(dev, bytes, dout, din);
+	// xilinx_spi_startup_block(dev, bytes, dout, din);
 
 	while (txbytes && rxbytes) {
 		count = xilinx_spi_fill_txfifo(bus, txp, txbytes);

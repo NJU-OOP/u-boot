@@ -38,10 +38,10 @@ static int uartlite_serial_putc(struct udevice *dev, const char ch)
 	struct uartlite_platdata *plat = dev_get_platdata(dev);
 	struct uartlite *regs = plat->regs;
 
-	if (in_be32(&regs->status) & SR_TX_FIFO_FULL)
+	if (readl(&regs->status) & SR_TX_FIFO_FULL)
 		return -EAGAIN;
 
-	out_be32(&regs->tx_fifo, ch & 0xff);
+	writel(ch & 0xff, &regs->tx_fifo);
 
 	return 0;
 }
@@ -51,10 +51,10 @@ static int uartlite_serial_getc(struct udevice *dev)
 	struct uartlite_platdata *plat = dev_get_platdata(dev);
 	struct uartlite *regs = plat->regs;
 
-	if (!(in_be32(&regs->status) & SR_RX_FIFO_VALID_DATA))
+	if (!(readl(&regs->status) & SR_RX_FIFO_VALID_DATA))
 		return -EAGAIN;
 
-	return in_be32(&regs->rx_fifo) & 0xff;
+	return readl(&regs->rx_fifo) & 0xff;
 }
 
 static int uartlite_serial_pending(struct udevice *dev, bool input)
@@ -63,9 +63,9 @@ static int uartlite_serial_pending(struct udevice *dev, bool input)
 	struct uartlite *regs = plat->regs;
 
 	if (input)
-		return in_be32(&regs->status) & SR_RX_FIFO_VALID_DATA;
+		return readl(&regs->status) & SR_RX_FIFO_VALID_DATA;
 
-	return !(in_be32(&regs->status) & SR_TX_FIFO_EMPTY);
+	return !(readl(&regs->status) & SR_TX_FIFO_EMPTY);
 }
 
 static int uartlite_serial_probe(struct udevice *dev)
@@ -73,9 +73,9 @@ static int uartlite_serial_probe(struct udevice *dev)
 	struct uartlite_platdata *plat = dev_get_platdata(dev);
 	struct uartlite *regs = plat->regs;
 
-	out_be32(&regs->control, 0);
-	out_be32(&regs->control, ULITE_CONTROL_RST_RX | ULITE_CONTROL_RST_TX);
-	in_be32(&regs->control);
+	writel(0, &regs->control);
+	writel(ULITE_CONTROL_RST_RX | ULITE_CONTROL_RST_TX, &regs->control);
+	readl(&regs->control);
 
 	return 0;
 }
@@ -119,19 +119,19 @@ static inline void _debug_uart_init(void)
 {
 	struct uartlite *regs = (struct uartlite *)CONFIG_DEBUG_UART_BASE;
 
-	out_be32(&regs->control, 0);
-	out_be32(&regs->control, ULITE_CONTROL_RST_RX | ULITE_CONTROL_RST_TX);
-	in_be32(&regs->control);
+	writel(0, &regs->control);
+	writel(ULITE_CONTROL_RST_RX | ULITE_CONTROL_RST_TX, &regs->control);
+	readl(&regs->control);
 }
 
 static inline void _debug_uart_putc(int ch)
 {
 	struct uartlite *regs = (struct uartlite *)CONFIG_DEBUG_UART_BASE;
 
-	while (in_be32(&regs->status) & SR_TX_FIFO_FULL)
+	while (readl(&regs->status) & SR_TX_FIFO_FULL)
 		;
 
-	out_be32(&regs->tx_fifo, ch & 0xff);
+	writel(ch & 0xff, &regs->tx_fifo);
 }
 
 DEBUG_UART_FUNCS
